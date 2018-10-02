@@ -1,2 +1,11 @@
 # locales
-glibc-compatible sv_SE locale file for anyone who wants w and W to be included in range expressions
+
+v2.28 of glibc modified the sv_SE locale in a way which caused `w` and `W` to be collated outside of alphabetic order when used in Posix regular expression ranges.
+
+It must be emphasized that Posix does not specify the behaviour of regex range expressions in locales other than the Posix (C) locale. The glibc modification does not, therefore, violate any standard. With the change, `w` and `W` continue to be in CTYPE `alpha`; `isalpha()` will return true and the Posix character classes which include alphabetic characters, such as `[[:alpha:]]`,  continue to work as expected. Furthermore, the sortation order (which makes `w` and `W` effectively variants of `v` and `V`) was not affected, so locale-aware sortation should continue to work. It is only Posix regex ranges whose behaviour differs.
+
+Using range expressions in a locale other than C/Posix is clearly a dangerous practice, and should be avoided if at all possible. I do not intend to promote the bad practice of writing `[a-z]` when what is intended is `[[:lower:]]`, or of using internationalised locales in applications which are best executed in the C/Posix locale. Nonetheless, there are lots of legacy scripts out there which engage in these practices, and it may be easier to use a locale with the expected behaviour rather than trying to root out all bad uses of range expressions.
+
+For this reason, I'm contributing this locale definition file. It was copied originally from glibc sources, and the original copyright notice is still included in the file; it says that "The Free Software Foundation does not claim any copyright interest in the locale data contained in this file", which I interpret to mean that I (and you, dear reader) are free to use this file in any way which you see fit. I, too, explicitly disown any copyright interest in the file. I also do not claim that it is appropriate for any purpose whatsoever; nor do I take responsibility for its use. Please don't use it in an application whose failure could have injurious consequences.
+
+I do not intend to maintain this file once glibc finds some resolution to the localized range expression issue. In the meantime, if you do encounter some problem using the file, feel free to submit a bug report and I might take a look at it. Good luck.
